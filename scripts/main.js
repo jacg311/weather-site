@@ -32,7 +32,7 @@ function animate() {
 }
 animate();*/
 
-async function getCurrentWeather() {
+export async function getCurrentWeather() {
     // get current weather for city
     let city = document.getElementById("location").value;
     let response = new Response("{}", {
@@ -40,11 +40,15 @@ async function getCurrentWeather() {
         statusText: "test response"
     });
 
-    if (!response.ok) {
+    let data = await response.text();
 
+    if (!response.ok && !data) {
+        let errorElement = document.getElementById("error_text");
+        errorElement.innerText = `A server error occured! ${response.status}: ${response.statusText}`;
+        //errorElement.style.display = "";
     }
 
-    let data = await response.json();
+    
 
     // fill error text when an error occurs
     if (!response.ok) {
@@ -54,7 +58,7 @@ async function getCurrentWeather() {
             document.getElementById("error_text").innerText = `An error occured! ${data["message"]}`
         }
         else { // something has gone very wrong uh oh
-            document.getElementById("error_text").innerText = `A server error occured! ${response.status}: ${response.statusText}`;
+            
         }
     }
 }

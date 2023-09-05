@@ -7,11 +7,22 @@
     <!--script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
     <script type="importmap"> { "imports": { "three": "https://unpkg.com/three@0.156.1/build/three.module.js", "three/addons/": "https://unpkg.com/three@<version>/examples/jsm/" } } </script-->
     <script type="module" src="scripts/main.js"></script>
+    <script type="module" src="scripts/index.js"></script>
+    <link rel="stylesheet" href="styles/style.css"">
 </head>
 <body>
     <input type="text" id="location">
-    <button onclick="getCurrentWeather()">Get Current Weather</button>
+    <button onclick="getCurrentWeather()">Get Current Weather</button><br>
     <div id="error_text">
+        Error will go here
+    </div>
+
+    <button id="settings">
+        Settings
+    </button>
+    <div id="settings_popup">
+        <label for="api_key">Open Weather Map API Key</label>
+        <input type="text" id="api_key" placeholder="Leave Empty for Sample Data">
 
     </div>
 </body>

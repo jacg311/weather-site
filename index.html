@@ -5,17 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
-    <!--script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
-    <script type="importmap"> { "imports": { "three": "https://unpkg.com/three@0.156.1/build/three.module.js", "three/addons/": "https://unpkg.com/three@<version>/examples/jsm/" } } </script-->
-    <script type="module" src="scripts/main.js"></script>
-    <script type="module" src="scripts/index.js"></script>
     <link rel="stylesheet" href="styles/style.css"">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="scripts/main.js"></script>
 </head>
 <body>
-    <input type=" text" id="location" placeholder="Leave empty for cur. location">
-    <button onclick="getCurrentWeather()">Get Current Weather</button><br>
+    <input type="text" id="location" placeholder="Leave empty for cur. location" onkeydown="triggerSearchOnEnter(event)">
+    <button id="get_weather_btn" onclick="requestWeather()">Get Current Weather</button><br>
     <div id="error_text" style="display: none; color: red;"></div>
-
 
     <div id="container_container">
         <div id="weather_data_container">

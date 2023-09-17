@@ -1,75 +1,62 @@
-/*import * as THREE from 'three';
+let apiKey;
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ alpha: true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-
-const geometry = new THREE.BoxGeometry(10, 3, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0x18b507 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-
-camera.position.z = 5;
-cube.rotation.x += -1.1;
-cube.rotation.z += -0.25;
-
-
-window.onresize = function(){
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize( window.innerWidth, window.innerHeight );
-
+/**
+ * Get the api key from local storage.
+ * Not using the event is too early and throws an error -_-
+ */
+window.onload = function () {
+    apiKey = localStorage.getItem("apiKey");
+    if (apiKey) {
+        document.getElementById("api_key").value = apiKey;
+    }
 }
 
-function animate() {
-    
-
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-}
-animate();*/
-
-let apiKey = localStorage.getItem("apiKey");
-if (apiKey) {
-    document.getElementById("api_key").value = apiKey;
-}
-
-export async function getCurrentWeather() {
-    // get current weather for city
+/**
+ * Get the current weather, or if apikey isnt filled, sample data
+ */
+async function requestWeather() {
     let city = document.getElementById("location").value;
 
-    // if there is an api key, request live data, otherwise return sample data
-    let response = apiKey
-        ? await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=de&appid=${apiKey}`)
-        : new Response("{}", {
-            status: 512,
-            statusText: "test response"
-        });
+    // if input field has no value, try to use the actual location instead.
+    if (!city) {
+        navigator.geolocation.getCurrentPosition(
+            posData => {getWeatherData(`https://api.openweathermap.org/data/2.5/forecast?lat=${posData.coords.latitude}&lon=${posData.coords.longitude}&units=metric&lang=de&appid=${apiKey}`)
+            console.log(posData.coords)},
+            error => showError(error.message)
+        )
+    } else {
+        getWeatherData(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=de&appid=${apiKey}`);
+    }
+}
+
+/**
+ * get the weather via a city name
+ * @param {string} name name of the city to get the weather for
+ */
+async function getWeatherData(url) {
+    let response = await fetchResponse(url);
 
     let data = await response.json();
 
     // fill error text when an error occurs
     let errorText = document.getElementById("error_text");
     if (!response.ok) {
-        errorText.innerText = `An error occured!\n${response.status} ${data["message"]}`;
-        errorText.style.display = "block";
+        showError(`${response.status} ${data["message"]}`);
         return;
     } else {
-        errorText.style.display = "none";
+        hideError();
     }
 
     let container = document.getElementById("weather_data_container");
     container.replaceChildren();
 
-    data["list"].forEach(listEntry => {
+    let weatherEntries = {};
+
+    data.list.forEach(listEntry => {
         let weatherEntry = document.createElement("div");
 
         let weatherData = formatWeatherData(listEntry);
 
-        weatherEntry.innerText = "Test";
         weatherEntry.classList.add("weather_entry");
         weatherEntry.innerHTML = `
             <div class="entry_header">
@@ -104,15 +91,29 @@ export async function getCurrentWeather() {
         container.appendChild(weatherEntry);
     });
 
+
+
 }
 
+/**
+ * Fetch weather data, or get random sample data
+ * @param {string} url the url to fetch
+ */
+async function fetchResponse(url) {
+    const samples = ["berlin", "duesseldorf", "london", "seattle"];
+    return fetch(apiKey ? url : `./sample/data/${samples[Math.random() * samples.length]}.json`)
+}
+
+/**
+ * extract and format data from api response
+ */
 function formatWeatherData(weatherEntry) {
     let date = new Date(weatherEntry.dt * 1000);
-    
+
     return {
         icon: weatherEntry.weather[0].icon,
         time: date.toLocaleTimeString("de-DE"),
-        date: date.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit"}),
+        date: date.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit" }),
         description: weatherEntry.weather[0].description,
         temperature: weatherEntry.main.temp.toFixed(1),
         tempFeelsLike: weatherEntry.main.feels_like.toFixed(1),
@@ -120,12 +121,47 @@ function formatWeatherData(weatherEntry) {
     };
 }
 
-export function toggleSettingsPopup(show) {
+/**
+ * toggle the settings popup
+ * @param {boolean} show wether the popup should be shown or hidden
+ */
+function toggleSettingsPopup(show) {
     let popup = document.getElementById("settings_popup");
     popup.style.display = show ? "block" : "none";
 }
 
-export function saveApiKeyInLocalStorage() {
+/**
+ * saves the api key in local storage
+ */
+function saveApiKeyInLocalStorage() {
     apiKey = document.getElementById("api_key").value;
     localStorage.setItem("apiKey", apiKey);
+}
+
+/**
+ * if the key that was pressed is "Enter" search for the weather
+ * @param {KeyboardEvent} event 
+ */
+function triggerSearchOnEnter(event) {
+    if (event.key == "Enter") {
+        document.getElementById("get_weather_btn").click();
+    }
+}
+
+/**
+ * show an error message on the page
+ * @param {string} errorMessage 
+ */
+function showError(errorMessage) {
+    let errorText = document.getElementById("error_text");
+    errorText.innerText = `Ein Fehler ist passiert!\n${errorMessage}`;
+    errorText.style.display = "block";
+}
+
+/**
+ * hide the error text
+ */
+function hideError() {
+    let errorText = document.getElementById("error_text");
+    errorText.style.display = "none";
 }

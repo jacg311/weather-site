@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,19 +12,26 @@
     <link rel="stylesheet" href="styles/style.css"">
 </head>
 <body>
-    <input type="text" id="location">
+    <input type=" text" id="location" placeholder="Leave empty for cur. location">
     <button onclick="getCurrentWeather()">Get Current Weather</button><br>
-    <div id="error_text">
-        Error will go here
+    <div id="error_text" style="display: none; color: red;"></div>
+
+
+    <div id="container_container">
+        <div id="weather_data_container">
+        </div>
     </div>
 
-    <button id="settings">
+    <button id="settings" onclick="toggleSettingsPopup(true)">
         Settings
     </button>
-    <div id="settings_popup">
-        <label for="api_key">Open Weather Map API Key</label>
-        <input type="text" id="api_key" placeholder="Leave Empty for Sample Data">
 
+    <div id="settings_popup" style="display: none;">
+        <div id="close_settings" onclick="toggleSettingsPopup(false)">&times;</div>
+        <div>
+            <label for="api_key">Open Weather Map API Key</label>
+            <input type="text" id="api_key" placeholder="Leave Empty for Sample Data" oninput="saveApiKeyInLocalStorage()">
+        </div>
     </div>
 </body>
 </html>

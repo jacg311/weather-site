@@ -1,3 +1,5 @@
-import {getCurrentWeather} from './main.js'
+import { getCurrentWeather, saveApiKeyInLocalStorage, toggleSettingsPopup } from './main.js'
 
 window.getCurrentWeather = getCurrentWeather;
+window.toggleSettingsPopup = toggleSettingsPopup;
+window.saveApiKeyInLocalStorage = saveApiKeyInLocalStorage;

@@ -18,13 +18,15 @@ async function requestWeather() {
     let city = document.getElementById("location").value;
 
     // if input field has no value, try to use the actual location instead.
-    if (!city) {
+    if (!city && apiKey) {
         navigator.geolocation.getCurrentPosition(
-            posData => {getWeatherData(`https://api.openweathermap.org/data/2.5/forecast?lat=${posData.coords.latitude}&lon=${posData.coords.longitude}&units=metric&lang=de&appid=${apiKey}`)
-            console.log(posData.coords)},
+            posData => getWeatherData(`https://api.openweathermap.org/data/2.5/forecast?lat=${posData.coords.latitude}&lon=${posData.coords.longitude}&units=metric&lang=de&appid=${apiKey}`),
             error => showError(error.message)
         )
-    } else {
+    } else if (!city && !apiKey) {
+        showError("Kann keine Live-Daten ohne API Schlüssel abfragen.")
+    }
+    else {
         getWeatherData(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=de&appid=${apiKey}`);
     }
 }
@@ -39,12 +41,9 @@ async function getWeatherData(url) {
     let data = await response.json();
 
     // fill error text when an error occurs
-    let errorText = document.getElementById("error_text");
     if (!response.ok) {
         showError(`${response.status} ${data["message"]}`);
         return;
-    } else {
-        hideError();
     }
 
     let container = document.getElementById("weather_data_container");
@@ -53,11 +52,25 @@ async function getWeatherData(url) {
     let weatherEntries = {};
 
     data.list.forEach(listEntry => {
-        let weatherEntry = document.createElement("div");
 
         let weatherData = formatWeatherData(listEntry);
 
-        weatherEntry.classList.add("weather_entry");
+        let entry = weatherEntries[weatherData.date];
+        if (!entry) {
+            weatherEntries[weatherData.date] = []
+        }
+        weatherEntries[weatherData.date].push(weatherData);
+    });
+
+    Object.keys(weatherEntries).forEach(e => {
+        console.log(e);
+        console.log(weatherEntries[e]);
+    });
+}
+
+/*
+let weatherEntry = document.createElement("div");
+        weatherEntry.classList.add("day_entry");
         weatherEntry.innerHTML = `
             <div class="entry_header">
                 <div class="center_title">
@@ -68,12 +81,7 @@ async function getWeatherData(url) {
                 <hr>
                 ${weatherData.description}
             </div>
-            <span class="left_text"></span>
-            <span></span>
             <table>
-                <tr>
-                    
-                </tr>
                 <tr>
                     <td>Temperatur</td>
                     <td class="entry_value">${weatherData.temperature}°C</td>
@@ -86,14 +94,9 @@ async function getWeatherData(url) {
                     <td>Luftfeuch.</td>
                     <td class="entry_value">${weatherData.humidity}%</td>
                 </tr>
-            </table>
-        `
+            </table>`;
         container.appendChild(weatherEntry);
-    });
-
-
-
-}
+*/
 
 /**
  * Fetch weather data, or get random sample data
@@ -101,7 +104,8 @@ async function getWeatherData(url) {
  */
 async function fetchResponse(url) {
     const samples = ["berlin", "duesseldorf", "london", "seattle"];
-    return fetch(apiKey ? url : `./sample/data/${samples[Math.random() * samples.length]}.json`)
+    let i = Math.floor(Math.random() * samples.length);
+    return await fetch(apiKey ? url : `../sample/data/${samples[i]}.json`);
 }
 
 /**
@@ -153,15 +157,20 @@ function triggerSearchOnEnter(event) {
  * @param {string} errorMessage 
  */
 function showError(errorMessage) {
-    let errorText = document.getElementById("error_text");
-    errorText.innerText = `Ein Fehler ist passiert!\n${errorMessage}`;
-    errorText.style.display = "block";
+    const errorContainer = document.getElementById("error_container");
+    let errorElement = document.createElement("div");
+    errorElement.innerHTML = `
+        <div class="error_log">
+            ${errorMessage}
+        </div>
+        <div class="progress_bar"></div>
+    `;
+    setTimeout(_ => errorElement.remove(), 10 * 1000);
+    errorContainer.appendChild(errorElement)
 }
 
-/**
- * hide the error text
- */
-function hideError() {
-    let errorText = document.getElementById("error_text");
-    errorText.style.display = "none";
+function setLocationName(name) {
+    const element = document.getElementById("location_name");
+    element.style.display = "block";
+    element.innerText = name;
 }

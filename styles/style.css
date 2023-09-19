@@ -54,20 +54,27 @@ input {
 }
 
 #weather_data_container {
-    display: grid;
     width: 45em;
     top: 4em;
     bottom: 2em;
     margin-top: 0.5em;
-    grid-template-columns: repeat(3, 15em);
 }
 
-.weather_entry {
+.day_entry {
     width: calc(100% - 1em);
     background-color: #3943b7;
     margin: 0.5em;
     border-radius: 5px;
     color: white;
+    
+}
+
+.avg_day_data {
+    width: 50%;
+}
+
+.day_chart {
+    width: 50%;
 }
 
 .entry_header {
@@ -80,12 +87,8 @@ input {
     align-items: center;
 }
 
-tr {
-    text-align: left;
-}
-
-.entry_value {
-    text-align: right;
+hr {
+    color: #78c0e0;
 }
 
 #api_key {
@@ -103,4 +106,37 @@ tr {
     right: 0.25em;
     font-size: 2em;
     cursor: default;
+}
+
+#error_container {
+    position: fixed;
+    top: 0%;
+    right: 0%;
+}
+
+.error_log {
+    padding: 1em;
+    background-color: cornflowerblue;
+}
+
+.progress_bar {
+    height: 10px;
+    background-color: darkorange;
+    animation: load 10s infinite linear;
+}
+
+@keyframes load {
+    0% {
+        width: 0%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+#location_name {
+    display: none;
+    text-align: center;
+    font-size: 2em;
 }

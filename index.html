@@ -6,16 +6,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
     <link rel="stylesheet" href="styles/style.css"">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src=" https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
     <script src="scripts/main.js"></script>
 </head>
-<body>
-    <input type="text" id="location" placeholder="Leave empty for cur. location" onkeydown="triggerSearchOnEnter(event)">
-    <button id="get_weather_btn" onclick="requestWeather()">Get Current Weather</button><br>
-    <div id="error_text" style="display: none; color: red;"></div>
 
+<body>
+    <input type="text" id="location" placeholder="Leave empty for cur. location"
+        onkeydown="triggerSearchOnEnter(event)">
+    <button id="get_weather_btn" onclick="requestWeather()">Get Current Weather</button><br>
+
+    <div id="location_name" style="display: none;">
+    </div>
     <div id="container_container">
         <div id="weather_data_container">
+            <div class="day_entry">
+                <div class="entry_header">
+                    <div class="center_title">
+                        <img width="50" height="50" src="https://openweathermap.org/img/wn/01d@2x.png">
+                        ${weatherData.date}<br>
+                    </div>
+                    ${weatherData.time}
+                    <hr>
+                </div>
+                <div style="display: flex;">
+                    <div class="avg_day_data" style="display: table-cell;">
+                        Beschreibung
+                        <table>
+                            <tr>
+                                <td>Temperatur</td>
+                                <td>19.5°C</td>
+                            </tr>
+                            <tr>
+                                <td>Gefühlt</td>
+                                <td>19°C</td>
+                            </tr>
+                            <tr>
+                                <td>Luftfeuch.</td>
+                                <td>80%</td>
+                            </tr>
+                        </table>
+                        awdaw<br>
+                        awd
+                    </div>
+                    <div class="day_chart" style="display: table-cell;">
+                        
+                        <canvas width="100%" height="100%">
+
+                        </canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -27,8 +68,13 @@
         <div id="close_settings" onclick="toggleSettingsPopup(false)">&times;</div>
         <div>
             <label for="api_key">Open Weather Map API Key</label>
-            <input type="text" id="api_key" placeholder="Leave Empty for Sample Data" oninput="saveApiKeyInLocalStorage()">
+            <input type="text" id="api_key" placeholder="Leave Empty for Sample Data"
+                oninput="saveApiKeyInLocalStorage()">
         </div>
     </div>
+
+    <div id="error_container">
+    </div>
 </body>
+
 </html>

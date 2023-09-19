@@ -8,6 +8,7 @@ button {
     padding: 1em;
     background-color: #150578;
     color: white;
+    cursor: pointer;
 }
 
 input {
@@ -54,7 +55,7 @@ input {
 }
 
 #weather_data_container {
-    width: 45em;
+    width: 50em;
     top: 4em;
     bottom: 2em;
     margin-top: 0.5em;
@@ -66,15 +67,52 @@ input {
     margin: 0.5em;
     border-radius: 5px;
     color: white;
-    
+    cursor: pointer;
 }
 
 .avg_day_data {
     width: 50%;
+    text-align: center;
 }
 
-.day_chart {
-    width: 50%;
+.avg_day_data > table {
+    width: 100%;
+    table-layout: fixed;
+    overflow-wrap: break-word;
+    text-align: left;
+}
+
+tr > :last-child {
+    text-align: right;
+}
+
+.hide {
+    display: none !important;
+}
+
+.detailed_entries {
+    transition: all 0.4s ease-in-out;
+    display: grid;
+    width: 50em;
+    top: 4em;
+    bottom: 2em;
+    margin-top: 0.5em;
+    grid-template-columns: repeat(4, 12.5em);
+}
+
+.weather_entry {
+    width: calc(100% - 1em);
+    background-color: #3943b7;
+    margin: 0.5em;
+    border-radius: 5px;
+    color: white;
+}
+
+#container_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .entry_header {
@@ -105,7 +143,7 @@ hr {
     top: 0px;
     right: 0.25em;
     font-size: 2em;
-    cursor: default;
+    cursor: pointer;
 }
 
 #error_container {
@@ -120,9 +158,9 @@ hr {
 }
 
 .progress_bar {
-    height: 10px;
-    background-color: darkorange;
-    animation: load 10s infinite linear;
+    height: 7px;
+    background-color: rgb(255, 0, 0);
+    animation: load 7s infinite linear;
 }
 
 @keyframes load {
@@ -139,4 +177,5 @@ hr {
     display: none;
     text-align: center;
     font-size: 2em;
+    color: white;
 }
